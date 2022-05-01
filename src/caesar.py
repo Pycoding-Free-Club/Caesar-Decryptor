@@ -1,38 +1,49 @@
 class CaesarDecryptor:
-    def __init__(self, password, salt):
-        self.password = password
-        self.salt = salt
+    def __init__(self):
         self.letters =  ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
-        self.check()
-
-    def check(self):
-        if type(self.salt) != int:
+    def check(self, password, salt, mode):
+        if type(password) != str:
             try:
-                self.salt = int(self.salt)
+                password = str(password)
             except:
-                print("Argument Salt must be a number")
+                raise ValueError("Argument Password must be a string")
 
-    def basic(self, mode):
+        if type(salt) != int:
+            try:
+                salt = int(salt)
+            except:
+                raise ValueError("Argument Password must be a string")
+
+        if type(mode) != bool:
+            try:
+                salt = bool(salt)
+            except:
+                raise ValueError("Argument Password must be a string")
+
+        return {
+            "password": password,
+            "salt": salt,
+            "mode": mode,
+        }
+
+    def calculate(self, password, salt, mode):
+        is_correct = self.check(password, salt, mode)
+        password = is_correct["password"]
+        salt = is_correct["salt"]
+        mode = is_correct["mode"]
+
         result = ""
 
-        for pwd in self.password:
-            for index, letter in enumerate(self.letters, 0):
-                if pwd.upper() == letter.upper():
-                    if mode:
-                        result += self.letters[index + self.salt]
-                    else:
-                        result += self.letters[index - self.salt]
+        for pwd in password:
+            pwd = pwd.lower()
+            index = self.letters.index(pwd)
+            letter = self.letters[index]
+            if pwd.upper() == letter.upper():
+                if mode:
+                    result += self.letters[index + salt]
                 else:
-                    continue
+                    result += self.letters[index - salt]
 
         return result
-
-    def decryption(self):
-        # 복호화
-        return self.basic(False)
-        
-    def encryption(self):
-        # 암호화
-        return self.basic(True)
 
